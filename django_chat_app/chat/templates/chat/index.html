@@ -12,13 +12,20 @@
   .page-content {
     padding: 100px 100px;
   }
+
+  .color-gray {
+    color: rgba(0, 0, 0, 0.4);
+  }
 </style>
 
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Title -->
-      <span class="mdl-layout-title">Welcome {{request.user.first_name}}!</span>
+      <span class="mdl-layout-title">
+        {% if request.user.is_authenticated %} Welcome
+        {{request.user.first_name}}! {% else %} Welcome Foreigner! {% endif %}
+      </span>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>
       <!-- Navigation. We hide it in small screens. -->
@@ -42,10 +49,12 @@
 
   <main class="mdl-layout__content">
     <div class="page-content">
-
-      {% if request.user.is_authenticated %}
-        <p>Du bist eingeloggt</p>
-      {% endif %}
+      {% if request.user.is_authenticated %} {% for message in messages %}
+      <p>
+        <span class="color-gray">[{{ message.created_at }}] </span
+        >{{message.author }}: <i>{{ message.text }}</i>
+      </p>
+      {% endfor %}
 
       <form action="/chat/" method="post">
         {% csrf_token %}
@@ -67,6 +76,14 @@
           Send
         </button>
       </form>
+
+      {% else %}
+      <h1>No access!</h1>
+      <p>
+        You're not logged in. Please click <a href="/login">here</a> to log in.
+      </p>
+
+      {% endif %}
     </div>
   </main>
 </div>
