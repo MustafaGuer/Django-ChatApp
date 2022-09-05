@@ -4,6 +4,7 @@ from chat.models import Chat, Message
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 @login_required(login_url='/login/')
@@ -29,3 +30,9 @@ def login_view(request):
             return render(request, 'auth/login.html', {'wrongPassword': True, 'redirect': redirect})
 
     return render(request, 'auth/login.html', {'redirect': redirect})
+
+def register_view(request):
+    if(request.method == 'POST' and request.POST.get('password') == request.POST.get('password_test')):
+        user = User.objects.create_user(request.POST.get('email'), request.POST.get('password'))
+    
+    return render(request, 'register/register.html')
