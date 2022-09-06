@@ -20,7 +20,8 @@ from chat.views import index, login_view, register_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('chat/', index),
-    path('login/', login_view),
-    path('register/', register_view),
+    path('chat/', index, name='index'),
+    path('login/', login_view, name='login'),
+    path('register/', register_view, name='register'),v  
 ]
+

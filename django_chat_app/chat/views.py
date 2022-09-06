@@ -25,14 +25,25 @@ def login_view(request):
             'username'), password=request.POST.get('password'))
         if user:
             login(request, user)
-            return HttpResponseRedirect(request.POST.get('redirect'))
+            # return HttpResponseRedirect(request.POST.get('redirect'))
+            return HttpResponseRedirect('/chat')
         else:
             return render(request, 'auth/login.html', {'wrongPassword': True, 'redirect': redirect})
 
     return render(request, 'auth/login.html', {'redirect': redirect})
 
 def register_view(request):
+    redirect = request.POST.get('None')
     if(request.method == 'POST' and request.POST.get('password') == request.POST.get('password_test')):
-        user = User.objects.create_user(request.POST.get('email'), request.POST.get('password'))
+        user = User.objects.create_user(
+            request.POST.get('username'),
+            request.POST.get('email'), 
+            request.POST.get('password'), 
+            first_name = request.POST.get('first_name'), 
+            last_name = request.POST.get('last_name'),
+            is_active = True)
+        user.save()
+        return HttpResponseRedirect('/login')
+        
     
-    return render(request, 'register/register.html')
+    return render(request, 'register/register.html', {'redirect': redirect})
