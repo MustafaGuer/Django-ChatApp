@@ -1,25 +1,61 @@
-{% extends 'base.html' %} {% block content %} {% if request.user.is_authenticated %} {% for message in messages %}
-<p>
-  <span class="color-gray">[{{ message.created_at }}] </span>{{message.author}}: <i>{{ message.text }}</i>
-</p>
-{% endfor %}
+{% extends 'base.html' %} {% block content %} {%if request.user.is_authenticated %} 
+
+<div id="messageContainer">
+  {% for message in messages %}
+  <p>
+    <span class="color-gray">[{{ message.created_at }}] </span
+    >{{message.author}}: <i>{{ message.text }}</i>
+  </p>
+  {% endfor %}
+</div>
 
 <script>
   async function sendMessage() {
     let fd = new FormData();
-    let token = '{{ csrf_token }}';
-    fd.append('themessage', themessage.value);
-    fd.append('csrfmiddlewaretoken', token)
+    let token = "{{ csrf_token }}";
+    fd.append("themessage", themessage.value);
+    fd.append("csrfmiddlewaretoken", token);
 
     try {
-      await fetch('/chat/', {
-        method: 'POST',
-        body: fd
+      
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+      let date = new Date();
+      const year = date.getFullYear();
+      const month = months[date.getMonth()];
+      const day = date.getDate();
+      const formattedToday = month + '. ' + day + ', ' + year;
+
+      messageContainer.innerHTML += `
+        <p id="deleteMessage">
+          <span class="color-gray">[${formattedToday}] </span><span class="color-gray">{{request.user}}:</span> <i class="color-gray">${themessage.value}</i>
+        </p>
+      `;
+
+      let response = await fetch("/chat/", {
+        method: "POST",
+        body: fd,
       });
-      themessage.value = '';
-      console.log('SEND SUCCESSFULL!!!');
-    } catch(e) {
-      console.error('SEND NOT SUCCESS!!!', e);
+
+      let json = await response.json();
+      let responseAsJson = JSON.parse(json);
+
+      document.getElementById('deleteMessage').remove();
+      messageContainer.innerHTML += `
+      <p>
+        <span class="color-gray">[${formattedToday}] </span><span>{{request.user}}:</span> <i>${themessage.value}</i>
+      </p>
+      `;
+      themessage.value = "";
+      
+      console.log("SEND SUCCESSFULL!!!");
+    } catch (e) {
+
+      messageContainer.innerHTML += `
+      <p>
+        <span class="color-red">[${formattedToday}] </span><span class="color-red">{{request.user}}:</span> <i class="color-red">${themessage.value}</i>
+      </p>
+      `;
+      console.error("SEND NOT SUCCESS!!!", e);
     }
   }
 </script>

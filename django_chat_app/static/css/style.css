@@ -1,7 +1,11 @@
 .page-content {
-    padding: 100px 100px;
-  }
+  padding: 100px 100px;
+}
 
-  .color-gray {
-    color: rgba(0, 0, 0, 0.4);
-  }
+.color-gray {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.color-red {
+  color: rgba(255, 0 , 0, 0.8);
+}

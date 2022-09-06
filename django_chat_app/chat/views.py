@@ -5,15 +5,18 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from django.http import JsonResponse
+from django.core import serializers
 
 @login_required(login_url='/login/')
 def index(request):
     if (request.method == 'POST'):
         print('Data received ' + request.POST['themessage'])
         myChat = Chat.objects.get(id=1)
-        Message.objects.create(
+        the_message = Message.objects.create(
             text=request.POST['themessage'], chat=myChat, author=request.user, receiver=request.user)
+        serialized_obj = serializers.serialize('json', [ the_message, ])
+        return JsonResponse(serialized_obj[1:-1], safe=False)
     chatMessages = Message.objects.filter(chat__id=1)
 
     return render(request, 'chat/index.html', {'messages': chatMessages})
