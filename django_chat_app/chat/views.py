@@ -9,6 +9,12 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.shortcuts import redirect
 
+"""
+this is a view to show chats messenger
+
+Returns:
+    view: message
+"""
 @login_required(login_url='/login/')
 def index(request):
     if (request.method == 'POST'):
