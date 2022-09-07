@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.core import serializers
+from django.shortcuts import redirect
 
 @login_required(login_url='/login/')
 def index(request):
@@ -22,6 +23,8 @@ def index(request):
     return render(request, 'chat/index.html', {'messages': chatMessages})
 
 def login_view(request):
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect('/chat')
     redirect = request.GET.get('next')
     if (request.method == 'POST'):
         user = authenticate(username=request.POST.get(
@@ -52,6 +55,5 @@ def register_view(request):
     return render(request, 'register/register.html', {'redirect': redirect})
 
 def logout_view(request):
-    if (request.user.is_authenticated):
-        logout(request)
-    return HttpResponseRedirect('/login')
+    logout(request)
+    return redirect('/login')
